@@ -41,7 +41,10 @@ export const Signup = () => {
         } catch (err: any) {
             console.error(err);
             const msg = err.response?.data?.msg || "Signup failed. Please try again.";
-            toast.error(msg);
+            const detail = err.response?.data?.error;
+            toast.error(msg, {
+                description: detail
+            });
         } finally {
             setLoading(false);
         }

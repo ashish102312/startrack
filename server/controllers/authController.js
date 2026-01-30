@@ -44,7 +44,8 @@ exports.register = async (req, res) => {
         console.error("Register Error:", err.message);
         res.status(500).json({
             msg: 'Server error during registration',
-            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+            // TODO: Remove detailed error in strict production later
+            error: err.message
         });
     }
 };
@@ -82,7 +83,8 @@ exports.login = async (req, res) => {
         console.error("Login Error:", err.message);
         res.status(500).json({
             msg: 'Server error during login',
-            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+            // TODO: Remove detailed error in strict production later
+            error: err.message
         });
     }
 };
