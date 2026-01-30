@@ -19,13 +19,21 @@ const io = new Server(server, {
 // Make IO accessible to routes via app.set
 app.set('io', io);
 
+// Trust proxy - Required for Vercel/serverless
+app.set('trust proxy', 1);
+
 // --- Middleware ---
 app.use(helmet());
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-// Rate Limiting (100 reqs / 15 min)
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
+// Rate Limiting (100 reqs / 15 min) - Configured for serverless
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 app.use('/api', limiter);
 
 // --- Database ---
