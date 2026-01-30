@@ -30,9 +30,18 @@ app.use('/api', limiter);
 
 // --- Database ---
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/incident_tracker";
+
+// Check for production localhost usage
+if (process.env.NODE_ENV === 'production' && MONGO_URI.includes('localhost')) {
+    console.warn("⚠️  WARNING: You are using 'localhost' MongoDB URI in production. This will likely fail on Vercel/Render.");
+}
+
 mongoose.connect(MONGO_URI)
     .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.error('MongoDB Connection Error:', err));
+    .catch(err => {
+        console.error('MongoDB Connection Error:', err);
+        // Do not exit process in serverless environment, just log it.
+    });
 
 // --- Routes ---
 app.use('/api/issues', issueRoutes);

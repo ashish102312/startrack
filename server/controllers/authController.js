@@ -41,8 +41,11 @@ exports.register = async (req, res) => {
             }
         );
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
+        console.error("Register Error:", err.message);
+        res.status(500).json({
+            msg: 'Server error during registration',
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+        });
     }
 };
 
@@ -76,8 +79,11 @@ exports.login = async (req, res) => {
             }
         );
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
+        console.error("Login Error:", err.message);
+        res.status(500).json({
+            msg: 'Server error during login',
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+        });
     }
 };
 
