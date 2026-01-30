@@ -36,6 +36,8 @@ mongoose.connect(MONGO_URI)
 
 // --- Routes ---
 app.use('/api/issues', issueRoutes);
+app.use('/api/feedback', require('./routes/feedbackRoutes'));
+app.use('/api/auth', require('./routes/authRoutes'));
 
 // --- Socket Logic ---
 let connectedClients = 0;

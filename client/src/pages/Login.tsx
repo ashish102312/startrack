@@ -4,25 +4,41 @@ import { toast } from 'sonner';
 import { Mail, Lock, ArrowRight, Github, Twitter } from 'lucide-react';
 import { Logo } from '../components/Logo';
 
+import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
+
 export const Login = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            const res = await axios.post(`${API_BASE_URL}/api/auth/login`, {
+                email,
+                password
+            });
+
+            login(res.data.token, res.data.user);
             toast.success("Welcome back!", {
                 description: "You have successfully logged in."
             });
             navigate('/dashboard');
-        }, 1500);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
+            console.error(err);
+            const msg = err.response?.data?.msg || "Login failed. Please check your credentials.";
+            toast.error(msg);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleSocialLogin = (provider: string) => {

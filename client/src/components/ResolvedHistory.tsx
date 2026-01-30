@@ -13,7 +13,7 @@ export const ResolvedHistory = ({ issues }: ResolvedHistoryProps) => {
     if (resolvedIssues.length === 0) return null;
 
     return (
-        <div className="glass-card bg-white mt-8 overflow-hidden border-l-4 border-l-emerald-500">
+        <div id="resolved-history" className="glass-card bg-white mt-8 overflow-hidden border-l-4 border-l-emerald-500">
             <div
                 className="p-6 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors"
                 onClick={() => setIsExpanded(!isExpanded)}

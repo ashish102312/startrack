@@ -9,7 +9,9 @@ export const VideoSection = () => {
                         <Play size={20} fill="currentColor" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-slate-900">Debugging Masterclass</h3>
+                        <a href="https://youtu.be/Dq8l1_-QgAc?si=4FEwSh2QUhAFYo7_" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-blue-600 transition-colors">
+                            <h3 className="font-bold text-slate-900">Debugging Masterclass</h3>
+                        </a>
                         <p className="text-sm text-slate-500">Learn effective strategies to fix bugs</p>
                     </div>
                 </div>
@@ -17,7 +19,7 @@ export const VideoSection = () => {
                 <div className="relative w-full rounded-xl overflow-hidden shadow-lg border border-slate-200 aspect-video group">
                     <iframe
                         className="absolute top-0 left-0 w-full h-full"
-                        src="https://www.youtube.com/embed/Fs_R77Fm3l8"
+                        src="https://www.youtube.com/embed/Dq8l1_-QgAc"
                         title="Debugging Masterclass"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen

@@ -4,8 +4,9 @@ import { toast } from "sonner";
 import { useSocket } from "./useSocket";
 import { handleError } from "../utils/errorHandler";
 import type { Issue } from "../types";
+import { API_BASE_URL } from "../config";
 
-const API_URL = "http://localhost:5001/api/issues";
+const API_URL = `${API_BASE_URL}/api/issues`;
 
 export const useIssues = () => {
     const [issues, setIssues] = useState<Issue[]>([]);
