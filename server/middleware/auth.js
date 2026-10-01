@@ -11,7 +11,8 @@ module.exports = function (req, res, next) {
 
     // Verify token
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+        const secret = process.env.JWT_SECRET || 'startrack_dev_fallback_secret_key_change_in_production';
+        const decoded = jwt.verify(token, secret);
         req.user = decoded.user;
         next();
     } catch {
