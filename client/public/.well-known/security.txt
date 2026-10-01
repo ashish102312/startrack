@@ -1,0 +1,4 @@
+Contact: mailto:security@startrack.app
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en
+Policy: https://github.com/ashish102312/startrack/blob/master/docs/SECURITY.md
