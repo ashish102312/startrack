@@ -31,10 +31,11 @@ exports.register = async (req, res) => {
             }
         };
 
+        const jwtSecret = process.env.JWT_SECRET || 'startrack_dev_fallback_secret_key_change_in_production';
         jwt.sign(
             payload,
-            process.env.JWT_SECRET || 'secret',
-            { expiresIn: 360000 },
+            jwtSecret,
+            { expiresIn: '7d' },
             (err, token) => {
                 if (err) throw err;
                 res.json({ token, user: { id: user.id, username: user.username, profilePic: user.profilePic, isVerified: user.isVerified, bio: user.bio } });
@@ -44,8 +45,7 @@ exports.register = async (req, res) => {
         console.error("Register Error:", err.message);
         res.status(500).json({
             msg: 'Server error during registration',
-            // TODO: Remove detailed error in strict production later
-            error: err.message
+            ...(process.env.NODE_ENV !== 'production' && { error: err.message })
         });
     }
 };
@@ -70,10 +70,11 @@ exports.login = async (req, res) => {
             }
         };
 
+        const jwtSecret = process.env.JWT_SECRET || 'startrack_dev_fallback_secret_key_change_in_production';
         jwt.sign(
             payload,
-            process.env.JWT_SECRET || 'secret',
-            { expiresIn: 360000 },
+            jwtSecret,
+            { expiresIn: '7d' },
             (err, token) => {
                 if (err) throw err;
                 res.json({ token, user: { id: user.id, username: user.username, profilePic: user.profilePic, isVerified: user.isVerified, bio: user.bio } });
@@ -83,8 +84,7 @@ exports.login = async (req, res) => {
         console.error("Login Error:", err.message);
         res.status(500).json({
             msg: 'Server error during login',
-            // TODO: Remove detailed error in strict production later
-            error: err.message
+            ...(process.env.NODE_ENV !== 'production' && { error: err.message })
         });
     }
 };
