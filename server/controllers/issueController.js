@@ -78,19 +78,21 @@ exports.createIssue = async (req, res) => {
         const newIssue = new Issue({
             _id: await generateId(),
             title,
-            description,
+            description: description || '',
             type,
             priority,
             status: 'open', // Default status
-            assignedTo,
-            tags: tags || [],
-            createdBy: 'user'
+            assignedTo: assignedTo || 'unassigned',
+            tags: Array.isArray(tags) ? tags : [],
+            createdBy: (req.user && req.user.username) ? req.user.username : (req.body.createdBy || 'user')
         });
 
         await newIssue.save();
 
-        // Emit real-time event
-        req.io.emit('ISSUE_ADDED', newIssue);
+        // Emit real-time event safely if socket.io is initialized
+        if (req.io) {
+            req.io.emit('ISSUE_ADDED', newIssue);
+        }
 
         res.status(201).json(newIssue);
     } catch (error) {
@@ -101,13 +103,23 @@ exports.createIssue = async (req, res) => {
 exports.updateIssue = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedIssue = await Issue.findByIdAndUpdate(id, req.body, { new: true });
+        const allowedUpdates = ['title', 'description', 'type', 'priority', 'status', 'assignedTo', 'tags'];
+        const updates = {};
+        for (const key of Object.keys(req.body)) {
+            if (allowedUpdates.includes(key)) {
+                updates[key] = req.body[key];
+            }
+        }
+
+        const updatedIssue = await Issue.findByIdAndUpdate(id, updates, { new: true });
 
         if (!updatedIssue) {
             return res.status(404).json({ message: "Issue not found" });
         }
 
-        req.io.emit('ISSUE_UPDATED', updatedIssue);
+        if (req.io) {
+            req.io.emit('ISSUE_UPDATED', updatedIssue);
+        }
         res.json(updatedIssue);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -117,9 +129,15 @@ exports.updateIssue = async (req, res) => {
 exports.deleteIssue = async (req, res) => {
     try {
         const { id } = req.params;
-        await Issue.findByIdAndDelete(id);
+        const deleted = await Issue.findByIdAndDelete(id);
 
-        req.io.emit('ISSUE_DELETED', id);
+        if (!deleted) {
+            return res.status(404).json({ message: "Issue not found" });
+        }
+
+        if (req.io) {
+            req.io.emit('ISSUE_DELETED', id);
+        }
 
         res.json({ message: "Deleted successfully" });
     } catch (error) {
@@ -129,10 +147,20 @@ exports.deleteIssue = async (req, res) => {
 
 exports.resetIssues = async (req, res) => {
     try {
+        // In production, require admin secret or authorization header to prevent public database wiping
+        if (process.env.NODE_ENV === 'production') {
+            const adminSecret = req.headers['x-admin-secret'];
+            if (!adminSecret || adminSecret !== process.env.ADMIN_SECRET) {
+                return res.status(403).json({ message: "Database reset is protected in production." });
+            }
+        }
+
         await Issue.deleteMany({});
         await Issue.insertMany(SEED_DATA);
 
-        req.io.emit('REFRESH_ALL');
+        if (req.io) {
+            req.io.emit('REFRESH_ALL');
+        }
 
         res.json({ message: "Reset successfully" });
     } catch (error) {
