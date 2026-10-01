@@ -1,16 +1,5 @@
 const Feedback = require('../models/Feedback');
 
-// Clear legacy feedback without user data to prevent validation errors
-// This is a one-time cleanup for development
-(async () => {
-    try {
-        await Feedback.deleteMany({ user: { $exists: false } });
-        console.log("Legacy feedback cleaned up");
-    } catch (e) {
-        console.error("Cleanup error", e);
-    }
-})();
-
 exports.createFeedback = async (req, res) => {
     try {
         const { rating, comment } = req.body;
