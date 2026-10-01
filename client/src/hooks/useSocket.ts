@@ -2,23 +2,34 @@ import { useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import { SOCKET_URL } from "../config";
 
-const SERVER_URL = SOCKET_URL;
+let sharedSocket: Socket | null = null;
 
-export const useSocket = () => {
-    const [socket, setSocket] = useState<Socket | null>(null);
-
-    useEffect(() => {
-        const socketInstance = io(SERVER_URL, {
+const getOrCreateSocket = (): Socket | null => {
+    if (typeof window === "undefined" || !SOCKET_URL) return null;
+    if (!sharedSocket) {
+        sharedSocket = io(SOCKET_URL, {
             transports: ["websocket", "polling"],
+            reconnectionAttempts: 5,
+            reconnectionDelay: 2000,
+            timeout: 10000,
         });
 
-        // eslint-disable-next-line
-        setSocket(socketInstance);
+        sharedSocket.on("connect_error", (err) => {
+            console.warn("Socket connection warning:", err.message);
+        });
+    }
+    return sharedSocket;
+};
 
-        return () => {
-            socketInstance.disconnect();
-        };
-    }, []);
+export const useSocket = () => {
+    const [socket] = useState<Socket | null>(() => getOrCreateSocket());
+
+    useEffect(() => {
+        // Ensure connection is maintained
+        if (socket && !socket.connected) {
+            socket.connect();
+        }
+    }, [socket]);
 
     return socket;
 };
