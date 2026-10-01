@@ -1,0 +1,16 @@
+[
+  {
+    "_id": "ISSUE-1001",
+    "title": "Database connection spike",
+    "type": "incident",
+    "priority": "high",
+    "status": "open"
+  },
+  {
+    "_id": "ISSUE-1002",
+    "title": "Broken link in documentation",
+    "type": "bug",
+    "priority": "low",
+    "status": "resolved"
+  }
+]
