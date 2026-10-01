@@ -1,0 +1,6 @@
+module.exports = {
+    DEFAULT_PORT: 5001,
+    RATE_LIMIT_WINDOW_MS: 15 * 60 * 1000,
+    RATE_LIMIT_MAX_REQUESTS: 200,
+    JWT_EXPIRATION: '7d'
+};
